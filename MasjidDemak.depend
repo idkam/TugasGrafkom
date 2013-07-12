@@ -1,0 +1,36 @@
+# depslib dependency file v1.0
+1372937327 source:/home/idkam/Dokumen/MasjidDemak/main.c
+	<stdio.h>
+	<stdlib.h>
+	<GL/glx.h>
+	<GL/gl.h>
+	<X11/X.h>
+	<X11/keysym.h>
+
+1373596540 source:/home/idkam/Dokumen/MasjidDemak/main.cpp
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<OpenGL/OpenGL.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<GL/glu.h>
+	<GL/gl.h>
+	"imageloader.h"
+	"vec3f.h"
+
+1341300924 source:/home/idkam/Dokumen/MasjidDemak/imageloader.cpp
+	<assert.h>
+	<fstream>
+	"imageloader.h"
+
+1341300924 /home/idkam/Dokumen/MasjidDemak/imageloader.h
+
+1341300924 /home/idkam/Dokumen/MasjidDemak/vec3f.h
+	<iostream>
+
+1341300924 source:/home/idkam/Dokumen/MasjidDemak/vec3f.cpp
+	<math.h>
+	"vec3f.h"
+
