@@ -39,9 +39,8 @@ typedef struct Images Images;
 //class untuk terain 2D
 class Terrain {
 private:
-	int w; //Width
-	int l; //Length
-	float** hs; //Heights
+	int w; //tinggi
+	float** hs; //berat
 	Vec3f** normals;
 	bool computedNormals; //Whether normals is up-to-date
 public:
@@ -220,7 +219,7 @@ void cleanup() {//untuk mehilangin file image
 	delete _terrain;
 //	delete _terrainTanah;
 }
-//mengambil gambar BMP
+//mengambil gambar dari file BMP
 int ImageLoad(char *filename, Images *image) {
 	FILE *file;
 	unsigned long size; // ukuran image dalam bytes
