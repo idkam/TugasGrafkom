@@ -71,11 +71,11 @@ public:
 		for (int i = 0; i < l; i++) {
 			delete[] normals[i];
 		}
-		delete[] normals;
+            delete[] normals;
 	}
 
 	int width() {
-		return w;
+    return w;
 	}
 
 	int length() {
