@@ -207,18 +207,15 @@ Terrain* loadTerrain(const char* filename, float height) {//ngambil file
 }
 
 float _angle = 0.0f;
-//buat tipe data terain
-//Terrain* _terrainAir;
-Terrain* _terrain;//pariable terain
-//Terrain* _terrainTanah;
-//Terrain* _terrainJalan;
+
+Terrain* _terrain;
+
 
 
 void cleanup() {//untuk mehilangin file image
-//    delete _terrainJalan;
-//    delete _terrainAir;
+
 	delete _terrain;
-//	delete _terrainTanah;
+
 }
 //mengambil gambar BMP
 int ImageLoad(char *filename, Images *image) {
@@ -293,23 +290,6 @@ int ImageLoad(char *filename, Images *image) {
 
 
 
-//mengambil tekstur
-Images* loadTexture() {
-	Images *image1;
-	// alokasi memmory untuk tekstur
-	image1 = (Images *) malloc(sizeof(Images));
-	if (image1 == NULL) {
-		printf("Error allocating space for image");//memory tidak cukup
-		exit(0);
-	}
-	//pic.bmp is a 64x64 picture
-	if (!ImageLoad("Wood-10777.bmp", image1)) {
-		exit(1);
-	}
-	return image1;
-}
-
-
 
 void initRendering() {//inisialisasi
 	glEnable(GL_DEPTH_TEST);//kedalaman
@@ -323,25 +303,15 @@ void initRendering() {//inisialisasi
 void drawScene() {//buat terain
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
 	float scale = 500.0f / max(_terrain->width() - 1, _terrain->length() - 1);
 	glScalef(scale, scale, scale);
 	glTranslatef(-(float) (_terrain->width() - 1) / 2, 0.0f,
 			-(float) (_terrain->length() - 1) / 2);
 
 	glColor3f(0.3f, 0.9f, 0.0f);
-	for (int z = 0; z < _terrain->length() - 1; z++) {
-		//Makes OpenGL draw a triangle at every three consecutive vertices
-		glBegin(GL_TRIANGLE_STRIP);
-		for (int x = 0; x < _terrain->width(); x++) {
-			Vec3f normal = _terrain->getNormal(x, z);
-			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x, _terrain->getHeight(x, z), z);
-			normal = _terrain->getNormal(x, z + 1);
-			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x, _terrain->getHeight(x, z + 1), z + 1);
-		}
-		glEnd();
-	}
+
+
 
 }
 
@@ -625,7 +595,7 @@ xaksis1-=8.25;
   //atas depan
     glPushMatrix();
     glScaled(3.5, 0.05,2.85);
-    glTranslatef(0,72,5);
+    glTranslatef(0,68,5);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glColor3f(1, 1, 1);
     glutSolidCube(5.0);
@@ -634,62 +604,99 @@ xaksis1-=8.25;
   //Lantai
     glPushMatrix();
     glScaled(3.5, 0.05,8);
-    glTranslatef(0,2,0);
+    glTranslatef(0,2,0); glPushMatrix();
+    glScaled(1.5, 1.5, 1.5);//untuk mengatur ukuran benda
+    glTranslatef(85.3, 25, 90); //untuk mengatur koordinat 3d
+    glRotated(45, 0, 1, 0);
+    glRotated(-90, 1, 0, 0);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3d(0.803921568627451, 0.5215686274509804, 0.2470588235294118);
+    glutSolidCone(4.2, 4, 4, 1);
+    glPopMatrix();
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glColor3f(1, 1, 1);
     glutSolidCube(5.0);
     glPopMatrix();
 
 
-
-
-  /*
-
-       glPushMatrix();
-    glScaled(3.0, 0.2,7);
-    glTranslatef(0,3,0);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3f(1, 1, 1);
-    glutSolidCube(5.0);
-    glPopMatrix();
-
-
-       glPushMatrix();
-    glScaled(3.5, 0.2,7);
-    glTranslatef(0,1,0);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3f(0, 0, 0);
-    glutSolidCube(5.0);
-    glPopMatrix();
-
-
-
-          glPushMatrix();
-    glScaled(3.0, 0.2,7);
-    glTranslatef(0,-2,0);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3f(1, 1, 1);
-    glutSolidCube(5.0);
-
-    glPopMatrix();
-    */
-
-
-/*
-
-   glPushMatrix();
-    glScaled(0.1, 0.5,0.1);
-    glTranslatef(60,5,25);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3f(0.4613, 0.4627, 0.4174);
-    glutSolidCube(5.0);
-    glPopMatrix();
-
-
-
-
-*/
 }
+
+void atapdepan(void){
+
+
+      glRotatef(_angle, 0.0f, 0.0f, 0.0f);
+glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+glColor3d(0.48, 0.46, 0.46);
+
+      //glScalef(1.0f, 1.5f, 1.0f);
+      glBegin(GL_QUADS);
+
+      //depan
+
+      glTexCoord2f(0.0f, 0.0f);
+      glVertex3f(-1.5f, -1.0f, 1.5f);
+      //glNormal3f(1.0f, 0.0f, 1.0f);
+      glTexCoord2f(1.0, 0.0f);
+      glVertex3f(1.5f, -1.0f, 1.5f);
+            //glNormal3f(1.0f, 0.0f, 1.0f);
+      glTexCoord2f(1.0f, 1.0f);
+      glVertex3f(1.1f, 1.0f, 0.0f);
+      //glNormal3f(-1.0f, 0.0f, 1.0f);
+      glColor3d(0.48, 0.46, 0.90);
+
+      glTexCoord2f(0.0f, 1.0f);
+      glVertex3f(-1.1f, 1.0f, 0.0f);
+
+      //kanan
+glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+glColor3d(0.48, 0.46, 0.46);
+
+
+      glVertex3f(1.5f, -1.0f, -1.5f);
+      //glNormal3f(1.0f, 0.0f, -1.0f);
+      glVertex3f(1.1f, 1.0f, 0.0f);
+      //glNormal3f(1.0f, 0.0f, 1.0f);
+      glColor3d(0.48, 0.46, 0.90);
+      glVertex3f(1.5f, -1.0f, 1.5f);
+      //glNormal3f(1.0f, 0.0f, 1.0f);
+
+      glVertex3f(1.5f, -1.0f, -1.5f);
+
+      //belakang
+glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+glColor3d(0.48, 0.46, 0.46);
+
+
+      glTexCoord2f(0.0f, 0.0f);
+      glVertex3f(-1.5f, -1.0f, -1.5f);
+
+      glTexCoord2f(1.0, 0.0f);
+      glVertex3f(-1.1f, 1.0f, 0.0f);
+
+      glTexCoord2f(1.0f, 1.0f);
+      glVertex3f(1.1f, 1.0f, 0.0f);
+
+      glTexCoord2f(0.0f, 1.0f);
+      glVertex3f(1.5f, -1.0f, -1.5f);
+
+      //kiri
+glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+glColor3d(0.48, 0.46, 0.46);
+
+
+      glVertex3f(-1.5f, -1.0f, -1.5f);
+      //glNormal3f(-1.0f, 0.0f, 1.0f);
+      glColor3d(0.48, 0.46, 0.90);
+      glVertex3f(-1.5f, -1.0f, 1.5f);
+      glVertex3f(-1.1f, 1.0f, 0.0f);
+      glVertex3f(-1.5f, -1.0f, -1.5f);
+
+
+      glEnd();
+
+}
+
+
 //menara
 void menara(void){
 
@@ -709,7 +716,7 @@ void pagar(void){
 
 float xaksis=-90.0;
 float xaksis2=-21;
-for (int i=0;i<20;i++){
+for (int i=0;i<11;i++){
 
 
 
@@ -743,86 +750,88 @@ xaksis2+=5;
    xaksis+=20;
 
 }
-
-
-}
-void garasi()
-{
+//patok
     glPushMatrix();
-    glTranslatef(-2.0f,0.0f,-3.0f);
-//============== BEGIN BODY GARASI=====================//
-
-    //atap kanan
-    glBegin(GL_POLYGON);
-    glColor3f(0.3,0.2,0.8);
-        glTexCoord2f(1.0,0.0);glVertex3f(0.75,0.7,0.0);
-        glTexCoord2f(1.0,1.0);glVertex3f(1.5,0.5,0.0);
-        glTexCoord2f(0.0,1.0);glVertex3f(1.5,0.5,-1.8);
-        glTexCoord2f(0.0,0.0);glVertex3f(0.75,0.7,-1.8);
-    glEnd();
-
-    //atap kiri
-    glBegin(GL_POLYGON);
-        glTexCoord2f(1.0,0.0);glVertex3f(0.75,0.7,0.0);
-        glTexCoord2f(1.0,1.0);glVertex3f(0.0,0.5,0.0);
-        glTexCoord2f(0.0,1.0);glVertex3f(0.0,0.5,-1.8);
-        glTexCoord2f(0.0,0.0);glVertex3f(0.75,0.7,-1.8);
-    glEnd();
-
-    //bagian atas
-    glBegin(GL_POLYGON);
-    glColor3f(0.3,0.2,0.1);
-        glVertex3f(0.0,0.5,0.0);
-        glVertex3f(1.5,0.5,0.0);
-        glVertex3f(1.5,0.5,-1.8);
-        glVertex3f(0.0,0.5,-1.8);
-    glEnd();
-    glBindTexture(GL_TEXTURE_2D,texture[11]);
-    //bagian belakang
-    glBegin(GL_POLYGON);
-    glColor3f(0.2,0.2,0.2);
-        glTexCoord2f(0.0,0.0);glVertex3f(0.0,0.0,-1.8);
-        glTexCoord2f(1.0,0.0);glVertex3f(1.5,0.0,-1.8);
-        glTexCoord2f(1.0,1.0);glVertex3f(1.5,0.5,-1.8);
-        glTexCoord2f(0.0,1.0);glVertex3f(0.0,0.5,-1.8);
-    glEnd();
-
-    //bagian kanan
-    glBegin(GL_POLYGON);
-        glTexCoord2f(1.0,0.0);glVertex3f(0.0,0.0,0.0);
-        glTexCoord2f(1.0,1.0);glVertex3f(0.0,0.5,0.0);
-        glTexCoord2f(0.0,1.0);glVertex3f(0.0,0.5,-1.8);
-        glTexCoord2f(0.0,0.0);glVertex3f(0.0,0.0,-1.8);
-    glEnd();
-
-    //bagian tutup kanan
-    glBegin(GL_POLYGON);
-        glTexCoord2f(0.0,0.0);glVertex3f(0.0,0.0,0.0);
-        glTexCoord2f(1.0,0.0);glVertex3f(0.25,0.0,0.0);
-        glTexCoord2f(1.0,1.0);glVertex3f(0.25,0.5,0.0);
-        glTexCoord2f(0.0,1.0);glVertex3f(0.0,0.5,0.0);
-    glEnd();
-
-    //bagian kiri
-    glBegin(GL_POLYGON);
-        glTexCoord2f(1.0,0.0);glVertex3f(1.5,0.0,0.0);
-        glTexCoord2f(1.0,1.0);glVertex3f(1.5,0.5,0.0);
-        glTexCoord2f(0.0,1.0);glVertex3f(1.5,0.5,-1.8);
-        glTexCoord2f(0.0,0.0);glVertex3f(1.5,0.0,-1.8);
-    glEnd();
-
-    //bagian tutup kanan
-    glBegin(GL_POLYGON);
-        glTexCoord2f(0.0,0.0);glVertex3f(1.5,0.0,0.0);
-        glTexCoord2f(1.0,0.0);glVertex3f(1.25,0.0,0.0);
-        glTexCoord2f(1.0,1.0);glVertex3f(1.25,0.5,0.0);
-        glTexCoord2f(0.0,1.0);glVertex3f(1.5,0.5,0.0);
-    glEnd();
-//============== END BODY GARASI=====================//
+    glScaled(2, 4,2);
+    glTranslatef(64,6.5,67);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(1, 1, 1);
+    glutSolidCube(5.0);
     glPopMatrix();
+
+    glPushMatrix();
+    glScaled(1.6, 0.5,1.6);
+    glTranslatef(80,72,84);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(0, 0, 0);
+    glutSolidCube(5.0);
+    glPopMatrix();
+
+       glPushMatrix();
+    glScaled(1.5, 1.5, 1.5);//untuk mengatur ukuran benda
+    glTranslatef(85.3, 25, 90); //untuk mengatur koordinat 3d
+    glRotated(45, 0, 1, 0);
+    glRotated(-90, 1, 0, 0);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3d(0.803921568627451, 0.5215686274509804, 0.2470588235294118);
+    glutSolidCone(4.2, 4, 4, 1);
+    glPopMatrix();
+
+//patok kanan
+      glPushMatrix();
+    glScaled(2, 4,2);
+    glTranslatef(85,6.5,67);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(1, 1, 1);
+    glutSolidCube(5.0);
+    glPopMatrix();
+
+     glPushMatrix();
+    glScaled(1.6, 0.5,1.6);
+    glTranslatef(106.35,72,84);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(0, 0, 0);
+    glutSolidCube(5.0);
+    glPopMatrix();
+
+     glPushMatrix();
+    glScaled(1.5, 1.5, 1.5);//untuk mengatur ukuran benda
+    glTranslatef(113.3, 25, 90); //untuk mengatur koordinat 3d
+    glRotated(45, 0, 1, 0);
+    glRotated(-90, 1, 0, 0);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3d(0.803921568627451, 0.5215686274509804, 0.2470588235294118);
+    glutSolidCone(4.2, 4, 4, 1);
+    glPopMatrix();
+
+
+//pagar kanan
+float xas=45;
+float xas1=187;
+for(int i=0;i<10;i++){
+
+glPushMatrix();
+    glScaled(4, 2,0.5);
+    glTranslatef(xas,10,260);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(1, 1, 1);
+    glutSolidCube(5.0);
+    glPopMatrix();
+
+     glPushMatrix();
+    glScaled(1, 3,0.5);
+    glTranslatef(xas1,10,260);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(1, 1, 1);
+    glutSolidCube(5.0);
+    glPopMatrix();
+    xas+=5;
+    xas1+=20;
+
 }
 
 
+}
 
 
 void display(void){
@@ -843,25 +852,9 @@ void display(void){
     glPushMatrix();
 
 	glBindTexture(GL_TEXTURE_2D, texture[1]); //untuk mmanggil texture
-	//drawSceneTanah(_terrain, 0.804f, 0.53999999f, 0.296f);
 	drawSceneTanah(_terrain, 0.3f, 0.53999999f, 0.0654f);
 	glPopMatrix();
 
-	glPushMatrix();
-
-//        drawSceneTanah(_terrainJalan, 0.4902f, 0.4683f,0.4594f);
-        glPopMatrix();
-
-	glPushMatrix();
-//	drawSceneTanah(_terrainAir, 0.0f, 0.2f, 0.5f);
-	glPopMatrix();
-
-
-	glPushMatrix();
-
-//	glBindTexture(GL_TEXTURE_2D, texture[0]);
-//	drawSceneTanah(_terrainTanah, 0.7f, 0.2f, 0.1f);
-	glPopMatrix();
 
 //masjid 1
 
@@ -870,7 +863,6 @@ glTranslatef(0,5,-10);
 glScalef(5, 5, 5);
 //glBindTexture(GL_TEXTURE_2D, texture[0]);
 masjid();
-//garasi();
 glPopMatrix();
 
 //menara
@@ -888,6 +880,17 @@ glScalef(0.5, 0.5, 0.5);
 pagar();
 glPopMatrix();
 
+//atapatas
+
+glPushMatrix();
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(0.3, 0.1, 0);
+glTranslatef(0,30,62);
+glScalef(28, 8, 23);
+atapdepan();
+glPopMatrix();
+
+
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); //disable the color mask
 	glDepthMask(GL_FALSE); //disable the depth mask
 
@@ -897,7 +900,6 @@ glPopMatrix();
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE); //set the stencil buffer to replace our next lot of data
 
 	//ground
-	//tanah(); //set the data plane to be replaced
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); //enable the color mask
 	glDepthMask(GL_TRUE); //enable the depth mask
 
@@ -947,43 +949,11 @@ glEnable(GL_TEXTURE_GEN_T);
 
 
     initRendering();
-      //  _terrainJalan = loadTerrain("heightmapJalan.bmp", 20);
-      //  _terrainAir = loadTerrain("heightmapAir.bmp", 20);
 	_terrain = loadTerrain("heightmap02.bmp", 20);
-	//_terrainTanah = loadTerrain("heightmapTanah.bmp", 20);
-
-	//binding texture
-
-Images *image1 = loadTexture();
-
-if (image1 == NULL) {
-		printf("Image was not returned from loadTexture\n");
-		exit(0);
-	}
 
 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 
-	// Generate texture
-	glGenTextures(1, texture);
-
-
-
-//------------tekstur masjid---------------
-
-	//binding texture untuk membuat texture 2D
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
-
-
-
-	//menyesuaikan ukuran textur ketika image lebih besar dari texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); //
-	//menyesuaikan ukuran textur ketika image lebih kecil dari texture
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); //
-
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, image1->sizeX, image1->sizeY, 0, GL_RGB,
-			GL_UNSIGNED_BYTE, image1->data);
- // texture
 }
 
 void reshape(int w, int h){
@@ -1043,7 +1013,6 @@ static void kibot(int key, int x, int y) {
 
 int main(int argc, char** argv){
 glutInit(&argc, argv);
-//glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL | GLUT_DEPTH); //add a stencil buffer to the window
 glutInitWindowSize(800,600);
 glutInitWindowPosition(100,100);
