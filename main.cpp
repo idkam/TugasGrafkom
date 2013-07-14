@@ -40,6 +40,7 @@ typedef struct Images Images;
 class Terrain {
 private:
 	int w; //tinggi
+	int l;
 	float** hs; //berat
 	Vec3f** normals;
 	bool computedNormals; //Whether normals is up-to-date
