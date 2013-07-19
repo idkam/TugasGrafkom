@@ -16,7 +16,7 @@
 
 
 //static GLfloat spin, spin2 = 0.0;
-float angle = 0;
+//float angle = 0;
 using namespace std;
 
 float lastx, lasty;
@@ -25,8 +25,8 @@ static int viewx = -110;
 static int viewy = 40;
 static int viewz =160;
 
-float rot = 0;
-
+//float rot = 0;
+GLuint _textureId,_textureId1;
 GLuint texture[1]; //array untuk texture
 
 struct Images {//tempat image
@@ -40,6 +40,7 @@ typedef struct Images Images;
 class Terrain {
 private:
 	int w; //tinggi
+	int l;
 	float** hs; //berat
 	Vec3f** normals;
 	bool computedNormals; //Whether normals is up-to-date
@@ -214,79 +215,23 @@ Terrain* _terrain;
 void cleanup() {//untuk mehilangin file image
 
 	delete _terrain;
-
-}
-//mengambil gambar dari file BMP
-int ImageLoad(char *filename, Images *image) {
-	FILE *file;
-	unsigned long size; // ukuran image dalam bytes
-	unsigned long i; // standard counter.
-	unsigned short int plane; // number of planes in image
-
-	unsigned short int bpp; // jumlah bits per pixel
-	char temp; // temporary color storage for var warna sementara untuk memastikan filenya ada
-
-
-	if ((file = fopen(filename, "rb")) == NULL) {
-		printf("File Not Found : %s\n", filename);
-		return 0;
-	}
-	// mencari file header bmp
-	fseek(file, 18, SEEK_CUR);
-	// read the width
-	if ((i = fread(&image->sizeX, 4, 1, file)) != 1) {//lebar beda
-		printf("Error reading width from %s.\n", filename);
-		return 0;
-	}
-	// membaca nilai height
-	if ((i = fread(&image->sizeY, 4, 1, file)) != 1) {//tingginya beda
-		printf("Error reading height from %s.\n", filename);
-		return 0;
-	}
-	//menghitung ukuran image(asumsi 24 bits or 3 bytes per pixel).
-
-	size = image->sizeX * image->sizeY * 3;
-	// read the planes
-	if ((fread(&plane, 2, 1, file)) != 1) {
-		printf("Error reading planes from %s.\n", filename);//bukan file bmp
-		return 0;
-	}
-	if (plane != 1) {
-		printf("Planes from %s is not 1: %u\n", filename, plane);//
-		return 0;
-	}
-	// read the bitsperpixel
-	if ((i = fread(&bpp, 2, 1, file)) != 1) {
-		printf("Error reading bpp from %s.\n", filename);
-
-		return 0;
-	}
-	if (bpp != 24) {
-		printf("Bpp from %s is not 24: %u\n", filename, bpp);//bukan 24 pixel
-		return 0;
-	}
-	// seek past the rest of the bitmap header.
-	fseek(file, 24, SEEK_CUR);
-	// read the data.
-	image->data = (char *) malloc(size);
-	if (image->data == NULL) {
-		printf("Error allocating memory for color-corrected image data");//gagal ambil memory
-		return 0;
-	}
-	if ((i = fread(image->data, size, 1, file)) != 1) {
-		printf("Error reading image data from %s.\n", filename);
-		return 0;
-	}
-	for (i = 0; i < size; i += 3) { // membalikan semuan nilai warna (gbr - > rgb)
-		temp = image->data[i];
-		image->data[i] = image->data[i + 2];
-		image->data[i + 2] = temp;
-	}
-	// we're done.
-	return 1;
 }
 
 
+GLuint loadTexture(Image* image) {
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D,
+				 0,
+				 GL_RGB,
+				 image->width, image->height,
+				 0,
+				 GL_RGB,
+				 GL_UNSIGNED_BYTE,
+				 image->pixels);
+	return textureId;
+}
 
 
 
@@ -297,7 +242,14 @@ void initRendering() {//inisialisasi
 	glEnable(GL_LIGHT0);//lampu
 	glEnable(GL_NORMALIZE);
 	glShadeModel(GL_SMOOTH);
+
+	Image* image = loadBMP("pagar.bmp");
+	_textureId = loadTexture(image);
+		Image* image1 = loadBMP("lantai.bmp");
+	_textureId1 = loadTexture(image1);
+	delete image;
 }
+
 
 void drawScene() {//buat terain
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -316,7 +268,7 @@ void drawScene() {//buat terain
 
 
 // display
-void drawSceneTanah(Terrain *terrain, GLfloat r, GLfloat g, GLfloat b) {
+void drawScene(Terrain *terrain, GLfloat r, GLfloat g, GLfloat b) {
 
 	float scale = 500.0f / max(terrain->width() - 1, terrain->length() - 1);
 	glScalef(scale, scale, scale);
@@ -340,37 +292,6 @@ void drawSceneTanah(Terrain *terrain, GLfloat r, GLfloat g, GLfloat b) {
 
 }
 
-GLuint loadtextures(const char *filename, int width, int height) {//buat ngambil dari file image untuk jadi texture
-	GLuint texture;
-
-	unsigned char *data;
-	FILE *file;
-
-
-	file = fopen(filename, "rb");
-	if (file == NULL)
-		return 0;
-
-	data = (unsigned char *) malloc(width * height * 3);  //file pendukung texture
-	fread(data, width * height * 3, 1, file);
-
-	fclose(file);
-
-	glGenTextures(1, &texture);//generet (dibentuk)
-	glBindTexture(GL_TEXTURE_2D, texture);//binding (gabung)
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-			GL_LINEAR_MIPMAP_NEAREST);//untuk membaca gambar jadi text dan dapat dibaca dengan pixel
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameterf(  GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	//glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB,
-			GL_UNSIGNED_BYTE, data);
-
-	data = NULL;
-
-	return texture;
-}
 
 const GLfloat light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 const GLfloat light_diffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -406,6 +327,12 @@ void masjid(void) {
 
 
        //atap
+
+        glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     glPushMatrix();
     glScaled(1, 1.0, 1);//untuk mengatur ukuran benda
     glTranslatef(0.0, 12, -1.9); //untuk mengatur koordinat 3d
@@ -415,8 +342,7 @@ void masjid(void) {
     glColor3d(0.48, 0.46, 0.46);
     glutSolidCone(4.2, 4, 4, 1);
     glPopMatrix();
-
-
+glDisable(GL_TEXTURE_2D);
 //Dinding Kiri Atas
 
     glPushMatrix();
@@ -458,6 +384,10 @@ void masjid(void) {
     glPopMatrix();
 
    //atap 2
+        glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glPushMatrix();
     glScaled(1.5,1.5,1.5);
@@ -468,7 +398,7 @@ void masjid(void) {
     glColor3d(0.48, 0.46, 0.46);
     glutSolidCone(4.2, 4, 4, 1);
     glPopMatrix();
-
+glDisable(GL_TEXTURE_2D);
   //Dinding Depan atas2
     glPushMatrix();
     glScaled(1.5, 0.3,1.5);
@@ -481,7 +411,10 @@ void masjid(void) {
 
 
     //atap 3
-
+        glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glPushMatrix();
     glScaled(3,1.5,3);
     glTranslatef(0,5.-2.75, -0.53);
@@ -502,7 +435,7 @@ void masjid(void) {
     glColor3d(0, 0, 0);
     glutWireCone(4.2, 4, 4, 40);
     glPopMatrix();
-
+glDisable(GL_TEXTURE_2D);
 
       //Dinding Depan atas2
     glPushMatrix();
@@ -519,9 +452,17 @@ void masjid(void) {
     float xaksis=75;
     float xaksis1=37.5;
     float zaksis1=89.5;
+    /*
+    glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	*/
 for (int i=0;i<10;i++){
 
 //penyagga
+
+
   glPushMatrix();
     glScaled(0.2, 0.26,0.2);
     glTranslatef(xaksis1,2,zaksis1);
@@ -590,7 +531,7 @@ xaksis1-=8.25;
     glPopMatrix();
     xaksis-=16.4595;
 }
-
+//glDisable(GL_TEXTURE_2D);
   //atas depan
     glPushMatrix();
     glScaled(3.5, 0.05,2.85);
@@ -601,6 +542,12 @@ xaksis1-=8.25;
     glPopMatrix();
 
   //Lantai
+
+           glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     glPushMatrix();
     glScaled(3.5, 0.05,8);
     glTranslatef(0,2,0); glPushMatrix();
@@ -609,7 +556,7 @@ xaksis1-=8.25;
     glRotated(45, 0, 1, 0);
     glRotated(-90, 1, 0, 0);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3d(0.803921568627451, 0.5215686274509804, 0.2470588235294118);
+    glColor3d(1, 1, 1);
     glutSolidCone(4.2, 4, 4, 1);
     glPopMatrix();
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -617,7 +564,7 @@ xaksis1-=8.25;
     glutSolidCube(5.0);
     glPopMatrix();
 
-
+glDisable(GL_TEXTURE_2D);
 }
 
 void atapdepan(void){
@@ -626,7 +573,10 @@ void atapdepan(void){
       glRotatef(_angle, 0.0f, 0.0f, 0.0f);
 glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 glColor3d(0.48, 0.46, 0.46);
-
+    glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       //glScalef(1.0f, 1.5f, 1.0f);
       glBegin(GL_QUADS);
 
@@ -648,7 +598,7 @@ glColor3d(0.48, 0.46, 0.46);
 
       //kanan
 glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-glColor3d(0.48, 0.46, 0.46);
+//glColor3d(0.48, 0.46, 0.46);
 
 
       glVertex3f(1.5f, -1.0f, -1.5f);
@@ -717,7 +667,10 @@ float xaksis=-90.0;
 float xaksis2=-21;
 for (int i=0;i<11;i++){
 
-
+glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glPushMatrix();
     glScaled(1, 3,0.5);
@@ -749,6 +702,7 @@ xaksis2+=5;
    xaksis+=20;
 
 }
+
 //patok
     glPushMatrix();
     glScaled(2, 4,2);
@@ -765,7 +719,7 @@ xaksis2+=5;
     glColor3f(0, 0, 0);
     glutSolidCube(5.0);
     glPopMatrix();
-
+glDisable(GL_TEXTURE_2D);
        glPushMatrix();
     glScaled(1.5, 1.5, 1.5);//untuk mengatur ukuran benda
     glTranslatef(85.3, 25, 90); //untuk mengatur koordinat 3d
@@ -777,22 +731,6 @@ xaksis2+=5;
     glPopMatrix();
 
 //patok kanan
-      glPushMatrix();
-    glScaled(2, 4,2);
-    glTranslatef(85,6.5,67);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3f(1, 1, 1);
-    glutSolidCube(5.0);
-    glPopMatrix();
-
-     glPushMatrix();
-    glScaled(1.6, 0.5,1.6);
-    glTranslatef(106.35,72,84);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glColor3f(0, 0, 0);
-    glutSolidCube(5.0);
-    glPopMatrix();
-
      glPushMatrix();
     glScaled(1.5, 1.5, 1.5);//untuk mengatur ukuran benda
     glTranslatef(113.3, 25, 90); //untuk mengatur koordinat 3d
@@ -803,12 +741,24 @@ xaksis2+=5;
     glutSolidCone(4.2, 4, 4, 1);
     glPopMatrix();
 
+glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+
+
+      glPushMatrix();
+    glScaled(2, 4,2);
+    glTranslatef(85,6.5,67);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(1, 1, 1);
+    glutSolidCube(5.0);
+    glPopMatrix();
 //pagar kanan
 float xas=45;
 float xas1=187;
 for(int i=0;i<10;i++){
-
 glPushMatrix();
     glScaled(4, 2,0.5);
     glTranslatef(xas,10,260);
@@ -828,8 +778,7 @@ glPushMatrix();
     xas1+=20;
 
 }
-
-
+glDisable(GL_TEXTURE_2D);
 }
 
 
@@ -851,7 +800,7 @@ void display(void){
     glPushMatrix();
 
 	glBindTexture(GL_TEXTURE_2D, texture[1]); //untuk mmanggil texture
-	drawSceneTanah(_terrain, 0.3f, 0.53999999f, 0.0654f);
+	drawScene(_terrain, 0.3f, 0.53999999f, 0.0654f);
 	glPopMatrix();
 
 
@@ -874,6 +823,8 @@ glPopMatrix();
 //pagar
 
 glPushMatrix();
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColor3f(0.3, 0.1, 0);
 glTranslatef(-70,0,60);
 glScalef(0.5, 0.5, 0.5);
 pagar();
@@ -921,8 +872,8 @@ glPopMatrix();
 
     glutSwapBuffers();//buffeer ke memory
 	glFlush();//memaksa untuk menampilkan
-	rot++;
-	angle++;
+	//rot++;
+//	angle++;
 
 
 
@@ -948,7 +899,7 @@ glEnable(GL_TEXTURE_GEN_T);
 
 
     initRendering();
-	_terrain = loadTerrain("heightmap02.bmp", 20);
+	_terrain = loadTerrain("heightmap02.bmp", 10);
 
 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
