@@ -882,7 +882,7 @@ glPopMatrix();
 
 //pagar
 
-glPushMatrix();
+glPushMatrix();// fungsinya
 glTranslatef(-70,0,60);
 glScalef(0.5, 0.5, 0.5);
 pagar();
