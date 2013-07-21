@@ -93,7 +93,7 @@ public:
 		return hs[z][x];
 	}
 
-	//Computes the normals, if they haven't been computed yet
+	// Computes the normals, if they haven't been computed yet
 	void computeNormals() {
 		if (computedNormals) {
 			return;
@@ -335,7 +335,7 @@ void drawScene() {//buat terain
 		for (int x = 0; x < _terrain->width(); x++) {
 			Vec3f normal = _terrain->getNormal(x, z);
 			glNormal3f(normal[0], normal[1], normal[2]);
-			glVertex3f(x, _terrain->getHeight(x, z), z);
+			glVertex3f(x, _terrain->getHeight(x, z), z); /// lokasi titik berada di (x,y,z)
 			normal = _terrain->getNormal(x, z + 1);
 			glNormal3f(normal[0], normal[1], normal[2]);
 			glVertex3f(x, _terrain->getHeight(x, z + 1), z + 1);
@@ -830,9 +830,9 @@ void display(void){
 	glClearStencil(0); //clear the stencil buffer
 	glClearDepth(1.0f);
 
-	glClearColor(0.0, 0.6, 0.8, 1);
+	glClearColor(0.0, 0.6, 0.8, 1); ///membersihkan layar dengan warna yang diinginkan
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    glLoadIdentity();//reset posisi
+    glLoadIdentity();//menahan gambar
 	gluLookAt(viewx, viewy, viewz, 0.0, 0.0, -100.0, 0.0, 1.0, 0.0); // untuk menentukan sudut pandang objek
 
 
@@ -866,7 +866,7 @@ void display(void){
 //masjid 1
 
 glPushMatrix();
-glTranslatef(0,5,-10);
+glTranslatef(0,5,-10); ///posisi objek pada layar
 glScalef(5, 5, 5);
 //glBindTexture(GL_TEXTURE_2D, texture[0]);
 masjid();
@@ -987,8 +987,8 @@ glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void reshape(int w, int h){
-glViewport(0, 0 , (GLsizei) w,(GLsizei)h);
-glMatrixMode(GL_PROJECTION);
+glViewport(0, 0 , (GLsizei) w,(GLsizei)h); ///melakukan setting viewport dari suatu window, yaitu bagian dari window yang digunakan untuk menggambar
+glMatrixMode(GL_PROJECTION); ///  matrix mentrasformasikan objek menjadi tampilan sesua yang diinginkan
 glLoadIdentity();
 
 gluPerspective(60, (GLfloat) w / (GLfloat) h, 0.1, 1000.0);
