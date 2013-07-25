@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+<<<<<<< HEAD
 	<File name="imageloader.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="3537" topLine="125" />
 	</File>
 	<File name="main.cpp" open="1" top="1" tabpos="0">
 		<Cursor position="4717" topLine="263" />
+=======
+	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="26132" topLine="1020" />
+		</Cursor>
+>>>>>>> 12a69c95bbb8e9d10c13df3f49f159f60827c2a4
 	</File>
 </CodeBlocks_layout_file>
