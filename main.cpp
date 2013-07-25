@@ -25,7 +25,6 @@ static int viewx = -110;
 static int viewy = 40;
 static int viewz =160;
 
-//float rot = 0;
 GLuint _textureId,_textureId1;
 GLuint texture[1]; //array untuk texture
 
@@ -226,13 +225,12 @@ GLuint loadTexture(Image* image) {
 				 0,
 				 GL_RGB,
 				 image->width, image->height,
-				 0,
+				 1,
 				 GL_RGB,
 				 GL_UNSIGNED_BYTE,
 				 image->pixels);
 	return textureId;
 }
-
 
 
 void initRendering() {//inisialisasi
@@ -247,7 +245,7 @@ void initRendering() {//inisialisasi
 	_textureId = loadTexture(image);
 		Image* image1 = loadBMP("lantai.bmp");
 	_textureId1 = loadTexture(image1);
-	delete image;
+	delete image1;
 }
 
 
@@ -270,7 +268,7 @@ void drawScene() {//buat terain
 // display
 void drawScene(Terrain *terrain, GLfloat r, GLfloat g, GLfloat b) {
 
-	float scale = 500.0f / max(terrain->width() - 1, terrain->length() - 1);
+	float scale = 350.0f / max(terrain->width() - 1, terrain->length() - 1);
 	glScalef(scale, scale, scale);
 	glTranslatef(-(float) (terrain->width() - 1) / 2, 0.0f,
 			-(float) (terrain->length() - 1) / 2);
@@ -291,9 +289,9 @@ void drawScene(Terrain *terrain, GLfloat r, GLfloat g, GLfloat b) {
 	}
 
 }
+// pencahayaan
 
-
-const GLfloat light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+const GLfloat light_ambient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 const GLfloat light_diffuse[] = { 0.7f, 0.7f, 0.7f, 1.0f };
 const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat light_position[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -330,8 +328,8 @@ void masjid(void) {
 
         glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//menyesuaikan ukuran textur ketika image lebih kecil dari texture
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);//menyesuaikan ukuran textur ketika image lebih besar dari texture
 
     glPushMatrix();
     glScaled(1, 1.0, 1);//untuk mengatur ukuran benda
@@ -780,7 +778,70 @@ glPushMatrix();
 }
 glDisable(GL_TEXTURE_2D);
 }
+float speed;
+void pohon()
+{
+//batang
+GLUquadricObj *pObj;
+pObj =gluNewQuadric();
+gluQuadricNormals(pObj, GLU_SMOOTH);
 
+//glEnable(GL_COLOR_MATERIAL);
+glPushMatrix();
+glColor3f(0.7,0.3,0);
+glRotatef(270,1,0,0);
+gluCylinder(pObj, 1, 0.7, 10, 20, 15);
+glPopMatrix();
+//glDisable(GL_COLOR_MATERIAL);
+
+//ranting
+
+glPushMatrix();
+glColor3ub(104,70,14);
+glTranslatef(0,7,0);
+glRotatef(330,1,0,0);
+gluCylinder(pObj, 0.6, 0.1, 7, 25, 25);
+glPopMatrix();
+
+//daun
+//glEnable(GL_COLOR_MATERIAL);
+glPushMatrix();
+glColor3f(0,1,0.3);
+glScaled(4, 3, 5);
+glTranslatef(0,4.7,0.4);
+glutSolidDodecahedron();
+glPopMatrix();
+//glDisable(GL_COLOR_MATERIAL);
+}
+void awan()
+{
+ glPushMatrix();
+ glColor3f(1, 1, 1);
+ glutSolidSphere(10, 50, 50);
+ glPopMatrix();
+ glPushMatrix();
+ glTranslatef(10,0,1);
+ glutSolidSphere(5, 50, 50);
+ glPopMatrix();
+ glPushMatrix();
+ glTranslatef(-2,6,-2);
+ glutSolidSphere(7, 50, 50);
+ glPopMatrix();
+ glPushMatrix();
+ glTranslatef(-10,-3,0);
+ glutSolidSphere(7, 50, 50);
+ glPopMatrix();
+ glPushMatrix();
+ glTranslatef(6,-2,2);
+ glutSolidSphere(7, 50, 50);
+ glPopMatrix();
+}
+void Timer(int)
+{
+speed++;
+glutPostRedisplay();
+glutTimerFunc(1,Timer,0);
+}
 
 void display(void){
 //    glutSwapBuffers();
@@ -798,7 +859,6 @@ void display(void){
     glPopMatrix();
 
     glPushMatrix();
-
 	glBindTexture(GL_TEXTURE_2D, texture[1]); //untuk mmanggil texture
 	drawScene(_terrain, 0.3f, 0.53999999f, 0.0654f);
 	glPopMatrix();
@@ -812,6 +872,63 @@ glScalef(5, 5, 5);
 //glBindTexture(GL_TEXTURE_2D, texture[0]);
 masjid();
 glPopMatrix();
+
+
+  glPushMatrix();
+    glTranslatef(-12,100,-30);
+    glTranslatef(-speed*0.01,speed*0.01,0);
+    awan();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(40,100,-50);
+    glTranslatef(-speed*0.01,speed*0.01,0);
+    awan();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(-40,90,-40);
+    glTranslatef(-speed*0.01,speed*0.01,0);
+    awan();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(90,90,-40);
+    glTranslatef(-speed*0.01,speed*0.01,0);
+    awan();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(90,90,-100);
+    glTranslatef(-speed*0.1,speed*0.01,speed*0.05);
+    awan();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(30,90,-150);
+    glTranslatef(-speed*0.1,speed*0.01,speed*0.05);
+    awan();
+    glPopMatrix();
+float x=-60;
+float z=-100;
+for (int i=0;i<6;i++){
+
+    for(int j=0;j<5;j++){
+    glPushMatrix();
+	glTranslatef(x,0,z);
+    pohon();
+    glPopMatrix();
+	if(x<-140){
+	x=-60;
+	}
+		x-=20;
+    }
+    z+=40;
+}
+
+
+
+
 
 //menara
 glPushMatrix();
@@ -839,6 +956,11 @@ glTranslatef(0,30,62);
 glScalef(28, 8, 23);
 atapdepan();
 glPopMatrix();
+//glDisable(GL_COLOR_MATERIAL);
+
+	//glPopMatrix();
+
+
 
 
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); //disable the color mask
@@ -868,8 +990,6 @@ glPopMatrix();
 
 	glDisable(GL_BLEND);
 
-
-
     glutSwapBuffers();//buffeer ke memory
 	glFlush();//memaksa untuk menampilkan
 	//rot++;
@@ -878,7 +998,7 @@ glPopMatrix();
 
 
 
-//glDisable(GL_COLOR_MATERIAL);
+
 }
 
 void init(void){
@@ -907,8 +1027,8 @@ glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void reshape(int w, int h){
-glViewport(0, 0 , (GLsizei) w,(GLsizei)h);
-glMatrixMode(GL_PROJECTION);
+glViewport(0, 0 , (GLsizei) w,(GLsizei)h);//melakukan setting viewport dari suatu window, yaitu bagian dari window yang digunakan untuk menggambar
+glMatrixMode(GL_PROJECTION);//  matrix mentrasformasikan objek menjadi tampilan sesua yang diinginkan
 glLoadIdentity();
 
 gluPerspective(60, (GLfloat) w / (GLfloat) h, 0.1, 1000.0);
@@ -969,6 +1089,7 @@ glutInitWindowPosition(100,100);
 glutCreateWindow("Bisa dibilang Masjid Demak");
 init();
 glutDisplayFunc(display);
+ glutTimerFunc(0,Timer,0);
 glutIdleFunc(display);
 glutReshapeFunc(reshape);
 
