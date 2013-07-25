@@ -209,7 +209,7 @@ Terrain* loadTerrain(const char* filename, float height) {//ngambil file
 float _angle = 0.0f;
 //buat tipe data terain
 //Terrain* _terrainAir;
-Terrain* _terrain;//pariable terain
+Terrain* _terrain;//variable terain
 //Terrain* _terrainTanah;
 //Terrain* _terrainJalan;
 
@@ -331,6 +331,7 @@ void drawScene() {//buat terain
 	glColor3f(0.3f, 0.9f, 0.0f);
 	for (int z = 0; z < _terrain->length() - 1; z++) {
 		//Makes OpenGL draw a triangle at every three consecutive vertices
+		//menggambar segitiga secara terhubung
 		glBegin(GL_TRIANGLE_STRIP);
 		for (int x = 0; x < _terrain->width(); x++) {
 			Vec3f normal = _terrain->getNormal(x, z);
@@ -390,13 +391,12 @@ GLuint loadtextures(const char *filename, int width, int height) {//buat ngambil
 	glGenTextures(1, &texture);//generet (dibentuk)
 	glBindTexture(GL_TEXTURE_2D, texture);//binding (gabung)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-			GL_LINEAR_MIPMAP_NEAREST);//untuk membaca gambar jadi text dan dapat dibaca dengan pixel
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); //untuk membaca gambar jadi text dan dapat dibaca dengan pixel
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glTexParameterf(  GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	//glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB,
-			GL_UNSIGNED_BYTE, data);
+	GL_UNSIGNED_BYTE, data);// untuk mendefinisikan dan melewati tekstur ke OpenGL
 
 	data = NULL;
 
@@ -423,21 +423,21 @@ const GLfloat high_shininess[] = { 100.0f };
 void masjid(void) {
 
      //atap atas
-    glPushMatrix();
+    glPushMatrix(); // untuk menyimpan koordinat yang ada
     glScaled(0.2, 0.2, 0.2);//untuk mengatur ukuran benda
     glTranslatef(0.0, 80, -10); //untuk mengatur koordinat 3d
-    glRotated(225, 0, 1, 0);
-    glRotated(90, 1, 0, 0);
+    glRotated(225, 0, 1, 0);//untuk merotasi objek
+    glRotated(90, 1, 0, 0);//untuk merotasi objek
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glColor3d(0.803921568627451, 0.5215686274509804, 0.2470588235294118);
-    glutSolidCone(4.2, 4, 4, 1);
-    glPopMatrix();
+    glutSolidCone(4.2, 4, 4, 1);//fungsi solid merupakan implementasi dari objek 3D yang berpusat pada asal pemodelan koordinat
+    glPopMatrix();//fungsi untuk memanggil suatu fungsi yang telah disimpan pada glPushMatrix
 
 
 
 
        //atap
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(1, 1.0, 1);//untuk mengatur ukuran benda
     glTranslatef(0.0, 12, -1.9); //untuk mengatur koordinat 3d
     glRotated(45, 0, 1, 0);
@@ -449,8 +449,7 @@ void masjid(void) {
 
 
 //Dinding Kiri Atas
-
-    glPushMatrix();
+    glPushMatrix ();// untuk menyimpan koordinat yang ada
      glScalef(0.04, 0.4, 1); //untuk mengatur ukuran benda
     glTranslatef(-56, 29, -1.7); //untuk mengatur koordinat 3d
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -460,7 +459,7 @@ void masjid(void) {
 
 
 //Dinding Kanan Atas
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.04, 0.4, 1);//untuk mengatur ukuran benda
     glTranslatef(56.0, 29, -1.7);//untuk mengatur koordinat 3d
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -470,7 +469,7 @@ void masjid(void) {
 
 
   //Dinding Belakang atas
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     //glScaled(0.035, 0.5, 0.8);
     glScaled(0.95, 0.4, 0.075);//untuk mengatur ukuran benda
     glTranslatef(0, 29.5,-49);//untuk mengatur koordinat 3d
@@ -480,7 +479,7 @@ void masjid(void) {
     glPopMatrix();
 
   //Dinding Depan atas
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.95, 0.4, 0.075);
     glTranslatef(0,29.5,2.3);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -490,7 +489,7 @@ void masjid(void) {
 
    //atap 2
 
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(1.5,1.5,1.5);
     glTranslatef(0,5.5, -1.15);
     glRotated(45, 0, 1, 0);
@@ -501,7 +500,7 @@ void masjid(void) {
     glPopMatrix();
 
   //Dinding Depan atas2
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(1.5, 0.3,1.5);
     glTranslatef(0,26,-1.1);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -513,7 +512,7 @@ void masjid(void) {
 
     //atap 3
 
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3,1.5,3);
     glTranslatef(0,5.-2.75, -0.53);
     glRotated(45, 0, 1, 0);
@@ -524,7 +523,7 @@ void masjid(void) {
     glPopMatrix();
 
 
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3,1.5,3);
     glTranslatef(0,5.-2.75, -0.53);
     glRotated(45, 0, 1, 0);
@@ -536,7 +535,7 @@ void masjid(void) {
 
 
       //Dinding Depan atas2
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(2.5, 0.6,2.5);
     glTranslatef(0,3,-1.2);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -553,7 +552,7 @@ void masjid(void) {
 for (int i=0;i<10;i++){
 
 //penyagga
-  glPushMatrix();
+  glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.2, 0.26,0.2);
     glTranslatef(xaksis1,2,zaksis1);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -562,7 +561,7 @@ for (int i=0;i<10;i++){
     glPopMatrix();
 
 
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.1, 0.5,0.1);
     glTranslatef(xaksis,5,zaksis);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -571,7 +570,7 @@ for (int i=0;i<10;i++){
     glPopMatrix();
 
     //penyagga kiri
-      glPushMatrix();
+      glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.2, 0.26,0.2);
     glTranslatef(-37,2,zaksis1);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -580,7 +579,7 @@ for (int i=0;i<10;i++){
     glPopMatrix();
 
     //tiang kiri
-       glPushMatrix();
+       glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.1, 0.5,0.1);
     glTranslatef(-75,5,zaksis);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -600,7 +599,7 @@ for (int i=0;i<10;i++){
 //penyangga
 
 
-  glPushMatrix();
+  glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.2, 0.26,0.2);
     glTranslatef(xaksis1,2,89.5);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -612,7 +611,7 @@ xaksis1-=8.25;
 //tiang depan
 
 
-      glPushMatrix();
+      glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.1, 0.5,0.1);
     glTranslatef(xaksis,5,180);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -623,7 +622,7 @@ xaksis1-=8.25;
 }
 
   //atas depan
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3.5, 0.05,2.85);
     glTranslatef(0,72,5);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -632,7 +631,7 @@ xaksis1-=8.25;
     glPopMatrix();
 
   //Lantai
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3.5, 0.05,8);
     glTranslatef(0,2,0);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -645,7 +644,7 @@ xaksis1-=8.25;
 
   /*
 
-       glPushMatrix();
+       glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3.0, 0.2,7);
     glTranslatef(0,3,0);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -654,7 +653,7 @@ xaksis1-=8.25;
     glPopMatrix();
 
 
-       glPushMatrix();
+       glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3.5, 0.2,7);
     glTranslatef(0,1,0);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -664,7 +663,7 @@ xaksis1-=8.25;
 
 
 
-          glPushMatrix();
+          glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3.0, 0.2,7);
     glTranslatef(0,-2,0);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -677,7 +676,7 @@ xaksis1-=8.25;
 
 /*
 
-   glPushMatrix();
+   glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(0.1, 0.5,0.1);
     glTranslatef(60,5,25);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -693,7 +692,7 @@ xaksis1-=8.25;
 //menara
 void menara(void){
 
- glPushMatrix();
+ glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(3, 0.3,3);
     glTranslatef(-20,80,30);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -713,7 +712,7 @@ for (int i=0;i<20;i++){
 
 
 
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(1, 3,0.5);
     glTranslatef(xaksis,10,260);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -721,7 +720,7 @@ for (int i=0;i<20;i++){
     glutSolidCube(5.0);
     glPopMatrix();
     //pagar pinggirnya
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(4, 2,0.5);
     glTranslatef(xaksis2,10,260);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -730,7 +729,7 @@ for (int i=0;i<20;i++){
     glPopMatrix();
 
     //corak
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glScaled(1, 2,0.5);
     glTranslatef(xaksis2,10,260);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -748,14 +747,14 @@ xaksis2+=5;
 }
 void garasi()
 {
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     glTranslatef(-2.0f,0.0f,-3.0f);
 //============== BEGIN BODY GARASI=====================//
 
     //atap kanan
     glBegin(GL_POLYGON);
     glColor3f(0.3,0.2,0.8);
-        glTexCoord2f(1.0,0.0);glVertex3f(0.75,0.7,0.0);
+        glTexCoord2f(1.0,0.0);glVertex3f(0.75,0.7,0.0);// glvertex3f untuk menentukan posisi sebuah titik
         glTexCoord2f(1.0,1.0);glVertex3f(1.5,0.5,0.0);
         glTexCoord2f(0.0,1.0);glVertex3f(1.5,0.5,-1.8);
         glTexCoord2f(0.0,0.0);glVertex3f(0.75,0.7,-1.8);
@@ -836,7 +835,7 @@ void display(void){
 	gluLookAt(viewx, viewy, viewz, 0.0, 0.0, -100.0, 0.0, 1.0, 0.0); // untuk menentukan sudut pandang objek
 
 
-    glPushMatrix();
+    glPushMatrix();// untuk menyimpan koordinat yang ada
     drawScene();
     glPopMatrix();
 
@@ -847,7 +846,7 @@ void display(void){
 	drawSceneTanah(_terrain, 0.3f, 0.53999999f, 0.0654f);
 	glPopMatrix();
 
-	glPushMatrix();
+	glPushMatrix();// untuk menyimpan koordinat yang ada
 
 //        drawSceneTanah(_terrainJalan, 0.4902f, 0.4683f,0.4594f);
         glPopMatrix();
@@ -857,7 +856,7 @@ void display(void){
 	glPopMatrix();
 
 
-	glPushMatrix();
+	glPushMatrix();// untuk menyimpan koordinat yang ada
 
 //	glBindTexture(GL_TEXTURE_2D, texture[0]);
 //	drawSceneTanah(_terrainTanah, 0.7f, 0.2f, 0.1f);
@@ -865,8 +864,8 @@ void display(void){
 
 //masjid 1
 
-glPushMatrix();
-glTranslatef(0,5,-10); ///posisi objek pada layar
+glPushMatrix();// untuk menyimpan koordinat yang ada
+glTranslatef(0,5,-10); // Mengubah posisi titik pusat sumbu koordinat
 glScalef(5, 5, 5);
 //glBindTexture(GL_TEXTURE_2D, texture[0]);
 masjid();
@@ -874,7 +873,7 @@ masjid();
 glPopMatrix();
 
 //menara
-glPushMatrix();
+glPushMatrix();// untuk menyimpan koordinat yang ada
 glTranslatef(-60,0,60);
 glScalef(0.5, 0.5, 0.5);
 menara();
@@ -882,7 +881,7 @@ glPopMatrix();
 
 //pagar
 
-glPushMatrix();
+glPushMatrix();// untuk menyimpan koordinat yang ada
 glTranslatef(-70,0,60);
 glScalef(0.5, 0.5, 0.5);
 pagar();
